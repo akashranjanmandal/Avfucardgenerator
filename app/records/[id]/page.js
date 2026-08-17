@@ -83,14 +83,19 @@ export default function EditCardPage() {
       const res = await fetch(`/api/cards/${id}`, { method: 'PUT', body: fd });
       if (!res.ok) throw new Error('Failed to update card record.');
 
-      setStatus('Regenerating PDF…');
+      setStatus('Rendering PDF…');
       const pdfBlob = await generateCardPdf(frontRef.current, backRef.current);
-      const pdfFd = new FormData();
-      pdfFd.append('pdf', pdfBlob, `${values.idNo || id}.pdf`);
-      const pdfRes = await fetch(`/api/cards/${id}/pdf`, { method: 'POST', body: pdfFd });
-      if (!pdfRes.ok) throw new Error('Card was updated, but storing the PDF failed.');
 
-      setStatus('Updated successfully.');
+      const downloadUrl = URL.createObjectURL(pdfBlob);
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = `${(values.name || 'id-card').replace(/\s+/g, '_')}_${values.idNo || id}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(downloadUrl);
+
+      setStatus('Updated and PDF downloaded.');
     } catch (err) {
       console.error(err);
       setStatus(err.message || 'Something went wrong.');
@@ -114,7 +119,7 @@ export default function EditCardPage() {
           onSignatureChange={setSignatureFile}
           onSubmit={handleSubmit}
           saving={saving}
-          submitLabel="Update & Regenerate PDF"
+          submitLabel="Update & Download PDF"
         />
         {status && <p className="status-msg">{status}</p>}
       </section>

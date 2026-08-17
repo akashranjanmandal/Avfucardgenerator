@@ -82,11 +82,6 @@ export default function GeneratePage() {
       setStatus('Rendering PDF…');
       const pdfBlob = await generateCardPdf(frontRef.current, backRef.current);
 
-      const pdfFd = new FormData();
-      pdfFd.append('pdf', pdfBlob, `${values.idNo || created.id}.pdf`);
-      const pdfRes = await fetch(`/api/cards/${created.id}/pdf`, { method: 'POST', body: pdfFd });
-      if (!pdfRes.ok) throw new Error('Card was saved, but storing the PDF failed.');
-
       const downloadUrl = URL.createObjectURL(pdfBlob);
       const a = document.createElement('a');
       a.href = downloadUrl;

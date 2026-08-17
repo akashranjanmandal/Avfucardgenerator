@@ -191,10 +191,28 @@ body {
 .records-table .actions button {
   border: none;
   background: none;
-  color: #c11423;
   font-weight: 700;
   cursor: pointer;
   padding: 0;
+  font-size: inherit;
+  font-family: inherit;
+}
+
+.records-table .actions .link-btn {
+  color: #0d1f6e;
+}
+
+.records-table .actions .link-btn:hover {
+  text-decoration: underline;
+}
+
+.records-table .actions .link-btn:disabled {
+  color: #999999;
+  cursor: default;
+}
+
+.records-table .actions .danger-btn {
+  color: #c11423;
 }
 
 .muted {

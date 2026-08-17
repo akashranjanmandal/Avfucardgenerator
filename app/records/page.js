@@ -1,12 +1,20 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import CardFront from '@/components/CardFront';
+import CardBack from '@/components/CardBack';
+import { generateCardPdf } from '@/lib/pdf';
 
 export default function RecordsPage() {
   const [cards, setCards] = useState([]);
   const [q, setQ] = useState('');
   const [loading, setLoading] = useState(true);
+  const [downloadCard, setDownloadCard] = useState(null);
+  const [downloadingId, setDownloadingId] = useState(null);
+
+  const frontRef = useRef(null);
+  const backRef = useRef(null);
 
   async function load(query) {
     setLoading(true);
@@ -25,6 +33,46 @@ export default function RecordsPage() {
     await fetch(`/api/cards/${id}`, { method: 'DELETE' });
     load(q);
   }
+
+  function handleDownload(card) {
+    setDownloadingId(card.id);
+    setDownloadCard(card);
+  }
+
+  useEffect(() => {
+    if (!downloadCard) return;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        // let the hidden card faces paint before capturing them
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+        const pdfBlob = await generateCardPdf(frontRef.current, backRef.current);
+        if (cancelled) return;
+
+        const url = URL.createObjectURL(pdfBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${(downloadCard.name || 'id-card').replace(/\s+/g, '_')}_${downloadCard.id_no || downloadCard.id}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        console.error(err);
+        alert('Failed to generate the PDF for this card.');
+      } finally {
+        if (!cancelled) {
+          setDownloadCard(null);
+          setDownloadingId(null);
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [downloadCard]);
 
   return (
     <div className="panel">
@@ -67,12 +115,15 @@ export default function RecordsPage() {
                 <td>{new Date(c.updated_at).toLocaleString()}</td>
                 <td className="actions">
                   <Link href={`/records/${c.id}`}>Edit</Link>
-                  {c.pdf_path ? (
-                    <a href={`/api/cards/${c.id}/pdf`}>Download PDF</a>
-                  ) : (
-                    <span className="muted">No PDF yet</span>
-                  )}
-                  <button type="button" onClick={() => handleDelete(c.id)}>
+                  <button
+                    type="button"
+                    className="link-btn"
+                    onClick={() => handleDownload(c)}
+                    disabled={downloadingId === c.id}
+                  >
+                    {downloadingId === c.id ? 'Preparing…' : 'Download PDF'}
+                  </button>
+                  <button type="button" className="danger-btn" onClick={() => handleDelete(c.id)}>
                     Delete
                   </button>
                 </td>
@@ -85,6 +136,31 @@ export default function RecordsPage() {
             )}
           </tbody>
         </table>
+      )}
+
+      {downloadCard && (
+        <div style={{ position: 'absolute', left: -9999, top: 0 }}>
+          <CardFront
+            ref={frontRef}
+            idNo={downloadCard.id_no}
+            name={downloadCard.name}
+            designation={downloadCard.designation}
+            officeDept={downloadCard.office_dept}
+            photoUrl={downloadCard.photo_path}
+            signatureUrl={downloadCard.signature_path}
+          />
+          <CardBack
+            ref={backRef}
+            homeAddress={downloadCard.home_address}
+            dob={downloadCard.dob}
+            bloodGroup={downloadCard.blood_group}
+            mobile={downloadCard.mobile}
+            email={downloadCard.email}
+            identificationMark={downloadCard.identification_mark}
+            dateOfIssue={downloadCard.date_of_issue}
+            validUpto={downloadCard.valid_upto}
+          />
+        </div>
       )}
     </div>
   );

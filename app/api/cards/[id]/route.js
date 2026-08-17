@@ -82,7 +82,6 @@ export async function DELETE(request, { params }) {
 
   await deletePublicFile(existing.photo_path);
   await deletePublicFile(existing.signature_path);
-  await deletePublicFile(existing.pdf_path);
 
   const { error: deleteError } = await supabase.from('cards').delete().eq('id', Number(id));
   if (deleteError) return NextResponse.json({ error: deleteError.message }, { status: 500 });
