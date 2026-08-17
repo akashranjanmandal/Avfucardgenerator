@@ -1,0 +1,177 @@
+.card {
+  position: relative;
+  width: 680px;
+  height: 432px;
+  background: #ffffff;
+  box-sizing: border-box;
+  border: 2px solid #c11423;
+  box-shadow:
+    inset 0 0 0 4px #ffffff,
+    inset 0 0 0 6px #c11423;
+  font-family: Arial, Helvetica, sans-serif;
+  overflow: hidden;
+  color: #111111;
+  flex: 0 0 auto;
+}
+
+.idNo {
+  position: absolute;
+  top: 13px;
+  right: 23px;
+  font-size: 11px;
+  font-weight: 700;
+  z-index: 3;
+}
+
+.header {
+  position: absolute;
+  top: 23px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 3;
+}
+
+.uniName {
+  font-size: 19px;
+  font-weight: 800;
+  color: #0d1f6e;
+  letter-spacing: 0.3px;
+}
+
+.uniAddr {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0d1f6e;
+  margin-top: 1px;
+}
+
+.title {
+  position: absolute;
+  top: 72px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 800;
+  color: #c11423;
+  text-decoration: underline;
+  letter-spacing: 1px;
+  z-index: 3;
+}
+
+.photoBox {
+  position: absolute;
+  left: 29px;
+  top: 104px;
+  width: 127px;
+  height: 150px;
+  border: 1.5px solid #333333;
+  background: #eeeeee;
+  z-index: 3;
+  overflow: hidden;
+}
+
+.photoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.photoPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #999999;
+  font-size: 11px;
+  text-align: center;
+  padding: 6px;
+}
+
+.infoBlock {
+  position: absolute;
+  left: 172px;
+  top: 107px;
+  width: 373px;
+  z-index: 3;
+}
+
+.row {
+  display: flex;
+  align-items: flex-start;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 21px;
+  margin-bottom: 4px;
+}
+
+.label {
+  flex: 0 0 115px;
+}
+
+.value {
+  flex: 1;
+  white-space: pre-line;
+}
+
+.bottomRow {
+  position: absolute;
+  left: 29px;
+  right: 27px;
+  bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  z-index: 3;
+}
+
+.signatureBlock {
+  width: 153px;
+  text-align: center;
+}
+
+.signatureImg {
+  height: 44px;
+  max-width: 100%;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+.signaturePlaceholder {
+  height: 44px;
+}
+
+.signatureCaption {
+  font-size: 11px;
+  font-weight: 700;
+  border-top: 1px solid #333333;
+  padding-top: 3px;
+  margin-top: 2px;
+}
+
+.vcBlock {
+  width: 270px;
+  text-align: center;
+}
+
+.vcBlank {
+  height: 44px;
+}
+
+.vcLine1 {
+  font-size: 11px;
+  font-weight: 700;
+  border-top: 1px solid #333333;
+  padding-top: 3px;
+  margin-top: 2px;
+}
+
+.vcLine2 {
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 12px;
+  margin-top: 2px;
+}

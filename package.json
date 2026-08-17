@@ -1,0 +1,22 @@
+{
+  "name": "avfu-id-card-generator",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "^15.5.23",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.1",
+    "@neondatabase/serverless": "^1.1.0",
+    "@netlify/blobs": "^10.7.13"
+  },
+  "devDependencies": {
+    "@netlify/plugin-nextjs": "^5.15.13"
+  }
+}
