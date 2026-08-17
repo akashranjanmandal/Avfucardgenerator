@@ -1,23 +1,23 @@
 import { NextResponse } from 'next/server';
-import db from '@/lib/db';
+import { getSupabaseAdmin } from '@/lib/supabaseAdmin';
 import { saveUploadedFile } from '@/lib/files';
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
-  const q = searchParams.get('q');
+  const q = (searchParams.get('q') || '').trim();
+  const supabase = getSupabaseAdmin();
 
-  let rows;
+  let query = supabase.from('cards').select('*').order('updated_at', { ascending: false });
   if (q) {
-    const like = `%${q}%`;
-    rows = await db.all(
-      `SELECT * FROM cards WHERE name ILIKE $1 OR id_no ILIKE $2 ORDER BY updated_at DESC`,
-      [like, like]
-    );
-  } else {
-    rows = await db.all(`SELECT * FROM cards ORDER BY updated_at DESC`);
+    const safe = q.replace(/[,()]/g, ' ').trim();
+    if (safe) {
+      query = query.or(`name.ilike.%${safe}%,id_no.ilike.%${safe}%`);
+    }
   }
 
-  return NextResponse.json(rows);
+  const { data, error } = await query;
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json(data);
 }
 
 export async function POST(request) {
@@ -28,35 +28,33 @@ export async function POST(request) {
   const signaturePath = await saveUploadedFile(form.get('signature'), 'signatures');
 
   const now = new Date().toISOString();
+  const supabase = getSupabaseAdmin();
 
-  const rows = await db.run(
-    `INSERT INTO cards (
-      id_no, name, designation, office_dept, photo_path, signature_path,
-      home_address, dob, blood_group, mobile, email, identification_mark,
-      date_of_issue, valid_upto, pdf_path, created_at, updated_at
-    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, NULL, $15, $16)
-    RETURNING id`,
-    [
-      fields.idNo,
-      fields.name,
-      fields.designation,
-      fields.officeDept,
-      photoPath,
-      signaturePath,
-      fields.homeAddress,
-      fields.dob,
-      fields.bloodGroup,
-      fields.mobile,
-      fields.email,
-      fields.identificationMark,
-      fields.dateOfIssue,
-      fields.validUpto,
-      now,
-      now,
-    ]
-  );
+  const { data, error } = await supabase
+    .from('cards')
+    .insert({
+      id_no: fields.idNo,
+      name: fields.name,
+      designation: fields.designation,
+      office_dept: fields.officeDept,
+      photo_path: photoPath,
+      signature_path: signaturePath,
+      home_address: fields.homeAddress,
+      dob: fields.dob,
+      blood_group: fields.bloodGroup,
+      mobile: fields.mobile,
+      email: fields.email,
+      identification_mark: fields.identificationMark,
+      date_of_issue: fields.dateOfIssue,
+      valid_upto: fields.validUpto,
+      created_at: now,
+      updated_at: now,
+    })
+    .select('id')
+    .single();
 
-  return NextResponse.json({ id: rows[0].id }, { status: 201 });
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json({ id: data.id }, { status: 201 });
 }
 
 function extractFields(form) {
