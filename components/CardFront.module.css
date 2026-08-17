@@ -22,7 +22,7 @@
   position: relative;
   z-index: 3;
   padding: 8px 20px 9px;
-  background: linear-gradient(180deg, #eef1fa 0%, #ffffff 100%);
+  background: #eef1fa;
   border-bottom: 1px solid #e4e8f4;
 }
 
@@ -69,16 +69,11 @@
 .titleRule {
   position: absolute;
   top: 117px;
-  left: 26px;
-  right: 24px;
+  left: 80px;
+  right: 78px;
   height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--card-border, #c11423) 15%,
-    var(--card-border, #c11423) 85%,
-    transparent
-  );
+  background: var(--card-border, #c11423);
+  opacity: 0.55;
   z-index: 3;
 }
 
