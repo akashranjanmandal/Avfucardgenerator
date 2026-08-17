@@ -96,46 +96,48 @@ export default function RecordsPage() {
       {loading ? (
         <p>Loading…</p>
       ) : (
-        <table className="records-table">
-          <thead>
-            <tr>
-              <th>Card No.</th>
-              <th>Name</th>
-              <th>Designation</th>
-              <th>Updated</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {cards.map((c) => (
-              <tr key={c.id}>
-                <td>{c.id}</td>
-                <td>{c.name}</td>
-                <td>{c.designation}</td>
-                <td>{new Date(c.updated_at).toLocaleString()}</td>
-                <td className="actions">
-                  <Link href={`/records/${c.id}`}>Edit</Link>
-                  <button
-                    type="button"
-                    className="link-btn"
-                    onClick={() => handleDownload(c)}
-                    disabled={downloadingId === c.id}
-                  >
-                    {downloadingId === c.id ? 'Preparing…' : 'Download PDF'}
-                  </button>
-                  <button type="button" className="danger-btn" onClick={() => handleDelete(c.id)}>
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-            {cards.length === 0 && (
+        <div className="table-scroll">
+          <table className="records-table">
+            <thead>
               <tr>
-                <td colSpan={5}>No records found.</td>
+                <th>Card No.</th>
+                <th>Name</th>
+                <th>Designation</th>
+                <th>Updated</th>
+                <th>Actions</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {cards.map((c) => (
+                <tr key={c.id}>
+                  <td>{c.id}</td>
+                  <td>{c.name}</td>
+                  <td>{c.designation}</td>
+                  <td>{new Date(c.updated_at).toLocaleString()}</td>
+                  <td className="actions">
+                    <Link href={`/records/${c.id}`}>Edit</Link>
+                    <button
+                      type="button"
+                      className="link-btn"
+                      onClick={() => handleDownload(c)}
+                      disabled={downloadingId === c.id}
+                    >
+                      {downloadingId === c.id ? 'Preparing…' : 'Download PDF'}
+                    </button>
+                    <button type="button" className="danger-btn" onClick={() => handleDelete(c.id)}>
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {cards.length === 0 && (
+                <tr>
+                  <td colSpan={5}>No records found.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       )}
 
       {downloadCard && (

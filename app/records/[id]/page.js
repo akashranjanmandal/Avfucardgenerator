@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import CardForm from '@/components/CardForm';
 import CardFront from '@/components/CardFront';
 import CardBack from '@/components/CardBack';
+import CardScaler from '@/components/CardScaler';
 import { generateCardPdf } from '@/lib/pdf';
 import { validUptoFromIssue } from '@/lib/dateHelpers';
 
@@ -140,29 +141,33 @@ export default function EditCardPage() {
         <div className="preview-stack">
           <div>
             <div className="preview-label">Front</div>
-            <CardFront
-              ref={frontRef}
-              idNo={id}
-              name={values.name}
-              designation={values.designation}
-              officeDept={values.officeDept}
-              photoUrl={photoUrl}
-              signatureUrl={signatureUrl}
-            />
+            <CardScaler>
+              <CardFront
+                ref={frontRef}
+                idNo={id}
+                name={values.name}
+                designation={values.designation}
+                officeDept={values.officeDept}
+                photoUrl={photoUrl}
+                signatureUrl={signatureUrl}
+              />
+            </CardScaler>
           </div>
           <div>
             <div className="preview-label">Back</div>
-            <CardBack
-              ref={backRef}
-              homeAddress={values.homeAddress}
-              dob={values.dob}
-              bloodGroup={values.bloodGroup}
-              mobile={values.mobile}
-              email={values.email}
-              identificationMark={values.identificationMark}
-              dateOfIssue={values.dateOfIssue}
-              validUpto={values.validUpto}
-            />
+            <CardScaler>
+              <CardBack
+                ref={backRef}
+                homeAddress={values.homeAddress}
+                dob={values.dob}
+                bloodGroup={values.bloodGroup}
+                mobile={values.mobile}
+                email={values.email}
+                identificationMark={values.identificationMark}
+                dateOfIssue={values.dateOfIssue}
+                validUpto={values.validUpto}
+              />
+            </CardScaler>
           </div>
         </div>
       </section>
