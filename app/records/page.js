@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import CardFront from '@/components/CardFront';
 import CardBack from '@/components/CardBack';
+import { IconList, IconSearch, IconEdit, IconDownload, IconTrash, IconInbox } from '@/components/Icons';
 import { generateCardPdf } from '@/lib/pdf';
 
 export default function RecordsPage() {
@@ -76,7 +77,10 @@ export default function RecordsPage() {
 
   return (
     <div className="panel">
-      <h1>Saved ID Cards</h1>
+      <h1>
+        <IconList size={20} />
+        Saved ID Cards
+      </h1>
 
       <form
         onSubmit={(e) => {
@@ -85,16 +89,31 @@ export default function RecordsPage() {
         }}
         className="search-row"
       >
-        <input
-          placeholder="Search by name or Card No."
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-        />
-        <button type="submit">Search</button>
+        <div className="search-input-wrap">
+          <IconSearch size={15} />
+          <input
+            placeholder="Search by name or Card No."
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+          />
+        </div>
+        <button type="submit" className="btn btn-primary">
+          <IconSearch size={14} />
+          Search
+        </button>
       </form>
 
       {loading ? (
-        <p>Loading…</p>
+        <div className="state-block">
+          <div className="spinner" />
+          <p className="state-sub">Loading records…</p>
+        </div>
+      ) : cards.length === 0 ? (
+        <div className="state-block">
+          <IconInbox size={40} />
+          <p className="state-title">No cards yet</p>
+          <p className="state-sub">Cards you generate will show up here.</p>
+        </div>
       ) : (
         <div className="table-scroll">
           <table className="records-table">
@@ -110,31 +129,33 @@ export default function RecordsPage() {
             <tbody>
               {cards.map((c) => (
                 <tr key={c.id}>
-                  <td>{c.id}</td>
+                  <td>
+                    <span className="card-no-pill">#{c.id}</span>
+                  </td>
                   <td>{c.name}</td>
-                  <td>{c.designation}</td>
-                  <td>{new Date(c.updated_at).toLocaleString()}</td>
+                  <td className="designation-cell">{c.designation}</td>
+                  <td className="designation-cell">{new Date(c.updated_at).toLocaleString()}</td>
                   <td className="actions">
-                    <Link href={`/records/${c.id}`}>Edit</Link>
+                    <Link href={`/records/${c.id}`} className="action-btn edit">
+                      <IconEdit size={14} />
+                      Edit
+                    </Link>
                     <button
                       type="button"
-                      className="link-btn"
+                      className="action-btn download"
                       onClick={() => handleDownload(c)}
                       disabled={downloadingId === c.id}
                     >
+                      <IconDownload size={14} />
                       {downloadingId === c.id ? 'Preparing…' : 'Download PDF'}
                     </button>
-                    <button type="button" className="danger-btn" onClick={() => handleDelete(c.id)}>
+                    <button type="button" className="action-btn delete" onClick={() => handleDelete(c.id)}>
+                      <IconTrash size={14} />
                       Delete
                     </button>
                   </td>
                 </tr>
               ))}
-              {cards.length === 0 && (
-                <tr>
-                  <td colSpan={5}>No records found.</td>
-                </tr>
-              )}
             </tbody>
           </table>
         </div>

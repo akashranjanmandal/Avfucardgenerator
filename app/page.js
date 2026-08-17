@@ -5,6 +5,7 @@ import CardForm from '@/components/CardForm';
 import CardFront from '@/components/CardFront';
 import CardBack from '@/components/CardBack';
 import CardScaler from '@/components/CardScaler';
+import { IconIdCard } from '@/components/Icons';
 import { generateCardPdf } from '@/lib/pdf';
 import { DEFAULT_OFFICE_DEPT } from '@/lib/cardConstants';
 import { todayDMY, validUptoFromIssue } from '@/lib/dateHelpers';
@@ -122,7 +123,10 @@ export default function GeneratePage() {
   return (
     <div className="page-grid">
       <section className="panel">
-        <h1>Generate ID Card</h1>
+        <h1>
+          <IconIdCard size={20} />
+          Generate ID Card
+        </h1>
         <CardForm
           values={values}
           onChange={handleChange}
@@ -140,7 +144,7 @@ export default function GeneratePage() {
       <section className="panel preview-panel">
         <h2>Live Preview</h2>
         <div className="preview-stack">
-          <div>
+          <div className="preview-card-wrap">
             <div className="preview-label">Front</div>
             <CardScaler>
               <CardFront
@@ -154,7 +158,7 @@ export default function GeneratePage() {
               />
             </CardScaler>
           </div>
-          <div>
+          <div className="preview-card-wrap">
             <div className="preview-label">Back</div>
             <CardScaler>
               <CardBack

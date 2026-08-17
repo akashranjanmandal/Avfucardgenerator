@@ -6,6 +6,7 @@ import CardForm from '@/components/CardForm';
 import CardFront from '@/components/CardFront';
 import CardBack from '@/components/CardBack';
 import CardScaler from '@/components/CardScaler';
+import { IconFlip, IconInbox } from '@/components/Icons';
 import { generateCardPdf } from '@/lib/pdf';
 import { validUptoFromIssue } from '@/lib/dateHelpers';
 
@@ -13,6 +14,7 @@ export default function EditCardPage() {
   const { id } = useParams();
 
   const [values, setValues] = useState(null);
+  const [notFound, setNotFound] = useState(false);
   const [validUptoTouched, setValidUptoTouched] = useState(false);
   const [photoFile, setPhotoFile] = useState(null);
   const [signatureFile, setSignatureFile] = useState(null);
@@ -30,6 +32,10 @@ export default function EditCardPage() {
     fetch(`/api/cards/${id}`)
       .then((r) => r.json())
       .then((card) => {
+        if (card.error) {
+          setNotFound(true);
+          return;
+        }
         setValues({
           name: card.name || '',
           designation: card.designation || '',
@@ -45,7 +51,8 @@ export default function EditCardPage() {
         });
         setExistingPhotoUrl(card.photo_path || null);
         setExistingSignatureUrl(card.signature_path || null);
-      });
+      })
+      .catch(() => setNotFound(true));
   }, [id]);
 
   useEffect(() => {
@@ -115,14 +122,36 @@ export default function EditCardPage() {
     }
   }
 
+  if (notFound) {
+    return (
+      <div className="panel">
+        <div className="state-block">
+          <IconInbox size={40} />
+          <p className="state-title">Card not found</p>
+          <p className="state-sub">This card may have been deleted. Go back to Records to pick another one.</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!values) {
-    return <div className="panel">Loading…</div>;
+    return (
+      <div className="panel">
+        <div className="state-block">
+          <div className="spinner" />
+          <p className="state-sub">Loading card…</p>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="page-grid">
       <section className="panel">
-        <h1>Edit ID Card</h1>
+        <h1>
+          <IconFlip size={20} />
+          Edit ID Card
+        </h1>
         <CardForm
           values={values}
           onChange={handleChange}
@@ -139,7 +168,7 @@ export default function EditCardPage() {
       <section className="panel preview-panel">
         <h2>Live Preview</h2>
         <div className="preview-stack">
-          <div>
+          <div className="preview-card-wrap">
             <div className="preview-label">Front</div>
             <CardScaler>
               <CardFront
@@ -153,7 +182,7 @@ export default function EditCardPage() {
               />
             </CardScaler>
           </div>
-          <div>
+          <div className="preview-card-wrap">
             <div className="preview-label">Back</div>
             <CardScaler>
               <CardBack

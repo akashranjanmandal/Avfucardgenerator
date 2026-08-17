@@ -1,6 +1,7 @@
 'use client';
 
 import styles from './CardForm.module.css';
+import { IconIdCard, IconFlip } from './Icons';
 
 export default function CardForm({
   values,
@@ -20,11 +21,15 @@ export default function CardForm({
   return (
     <form onSubmit={onSubmit} className={styles.form}>
       <p className={styles.cardNo}>
+        <IconIdCard size={15} />
         Card No. {cardNo ? `#${cardNo}` : '— assigned automatically on save'}
       </p>
 
-      <fieldset>
-        <legend>Front side</legend>
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <IconIdCard size={15} />
+          <span>Front side</span>
+        </div>
 
         <label>
           Name
@@ -41,27 +46,32 @@ export default function CardForm({
           <textarea name="officeDept" value={values.officeDept} onChange={handleInput} rows={3} />
         </label>
 
-        <label>
-          Photo
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => onPhotoChange(e.target.files?.[0] || null)}
-          />
-        </label>
+        <div className={styles.fieldRow}>
+          <label>
+            Photo
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => onPhotoChange(e.target.files?.[0] || null)}
+            />
+          </label>
 
-        <label>
-          Holder&apos;s Signature
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => onSignatureChange(e.target.files?.[0] || null)}
-          />
-        </label>
-      </fieldset>
+          <label>
+            Holder&apos;s Signature
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => onSignatureChange(e.target.files?.[0] || null)}
+            />
+          </label>
+        </div>
+      </div>
 
-      <fieldset>
-        <legend>Back side</legend>
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <IconFlip size={15} />
+          <span>Back side</span>
+        </div>
 
         <label>
           Home Address
@@ -74,15 +84,22 @@ export default function CardForm({
           />
         </label>
 
-        <label>
-          Date of Birth
-          <input name="dob" placeholder="20-01-1963" value={values.dob} onChange={handleInput} />
-        </label>
+        <div className={styles.fieldRow}>
+          <label>
+            Date of Birth
+            <input name="dob" placeholder="20-01-1963" value={values.dob} onChange={handleInput} />
+          </label>
 
-        <label>
-          Blood Group
-          <input name="bloodGroup" placeholder="A+ve" value={values.bloodGroup} onChange={handleInput} />
-        </label>
+          <label>
+            Blood Group
+            <input
+              name="bloodGroup"
+              placeholder="A+ve"
+              value={values.bloodGroup}
+              onChange={handleInput}
+            />
+          </label>
+        </div>
 
         <label>
           Mobile No.
@@ -103,26 +120,28 @@ export default function CardForm({
           />
         </label>
 
-        <label>
-          Date of Issue
-          <input
-            name="dateOfIssue"
-            placeholder="20.01.2026"
-            value={values.dateOfIssue}
-            onChange={handleInput}
-          />
-        </label>
+        <div className={styles.fieldRow}>
+          <label>
+            Date of Issue
+            <input
+              name="dateOfIssue"
+              placeholder="20.01.2026"
+              value={values.dateOfIssue}
+              onChange={handleInput}
+            />
+          </label>
 
-        <label>
-          Valid Upto
-          <input
-            name="validUpto"
-            placeholder="31.01.2028"
-            value={values.validUpto}
-            onChange={handleInput}
-          />
-        </label>
-      </fieldset>
+          <label>
+            Valid Upto
+            <input
+              name="validUpto"
+              placeholder="31.01.2028"
+              value={values.validUpto}
+              onChange={handleInput}
+            />
+          </label>
+        </div>
+      </div>
 
       <div className={styles.actions}>
         <button type="submit" disabled={saving}>
