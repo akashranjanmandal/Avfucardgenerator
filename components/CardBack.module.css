@@ -4,10 +4,10 @@
   height: 432px;
   background: #ffffff;
   box-sizing: border-box;
-  border: 2px solid #c11423;
+  border: 4px solid var(--card-border, #c11423);
   box-shadow:
-    inset 0 0 0 4px #ffffff,
-    inset 0 0 0 6px #c11423;
+    inset 0 0 0 5px #ffffff,
+    inset 0 0 0 9px var(--card-border, #c11423);
   font-family: Arial, Helvetica, sans-serif;
   overflow: hidden;
   color: #111111;
@@ -16,62 +16,87 @@
 
 .leftBlock {
   position: absolute;
-  left: 33px;
-  top: 31px;
-  width: 406px;
+  left: 28px;
+  top: 18px;
+  width: 440px;
   z-index: 3;
 }
 
 .addrLabel {
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 600;
+  color: #5b6172;
   margin-bottom: 2px;
 }
 
 .addrValue {
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 700;
-  line-height: 20px;
+  color: #14161f;
+  line-height: 24px;
   white-space: pre-line;
-  padding-left: 17px;
-  margin-bottom: 7px;
+  padding-left: 20px;
+  margin-bottom: 6px;
 }
 
 .row {
   display: flex;
   align-items: flex-start;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 21px;
-  margin-bottom: 4px;
+  font-size: 18px;
+  line-height: 24px;
+  margin-bottom: 3px;
 }
 
 .label {
-  flex: 0 0 133px;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  padding-right: 8px;
+  font-weight: 600;
+  color: #5b6172;
 }
 
 .value {
   flex: 1;
+  min-width: 0;
   white-space: pre-line;
+  font-weight: 700;
+  color: #14161f;
 }
 
 .returnBox {
   position: absolute;
-  right: 27px;
-  top: 31px;
-  width: 180px;
-  border: 1.5px solid #333333;
-  padding: 9px;
+  right: 22px;
+  top: 18px;
+  width: 158px;
+  border: 1.5px solid #d3d7e4;
+  border-radius: 6px;
+  background: #fbfbfd;
+  overflow: hidden;
   text-align: center;
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 14px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #40465c;
+  line-height: 15px;
   z-index: 3;
+}
+
+.returnBody {
+  padding: 10px 10px 12px;
+}
+
+.registrarHeader {
+  background: linear-gradient(135deg, #0d1f6e, #071442);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 11.5px;
+  letter-spacing: 0.3px;
+  padding: 6px 8px;
 }
 
 .registrarBold {
   font-weight: 800;
-  margin: 3px 0;
+  color: #14161f;
+  margin: 5px 0 3px;
 }
 
 .returnSpacer {

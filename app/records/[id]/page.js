@@ -7,7 +7,7 @@ import CardFront from '@/components/CardFront';
 import CardBack from '@/components/CardBack';
 import CardScaler from '@/components/CardScaler';
 import { IconFlip, IconInbox } from '@/components/Icons';
-import { generateCardPdf } from '@/lib/pdf';
+import { generateCardImages, downloadCardImages } from '@/lib/cardImages';
 import { validUptoFromIssue } from '@/lib/dateHelpers';
 
 export default function EditCardPage() {
@@ -38,6 +38,7 @@ export default function EditCardPage() {
         }
         setValues({
           name: card.name || '',
+          role: card.role || '',
           designation: card.designation || '',
           officeDept: card.office_dept || '',
           homeAddress: card.home_address || '',
@@ -101,19 +102,13 @@ export default function EditCardPage() {
       const res = await fetch(`/api/cards/${id}`, { method: 'PUT', body: fd });
       if (!res.ok) throw new Error('Failed to update card record.');
 
-      setStatus('Rendering PDF…');
-      const pdfBlob = await generateCardPdf(frontRef.current, backRef.current);
+      setStatus('Rendering images…');
+      const images = await generateCardImages(frontRef.current, backRef.current);
 
-      const downloadUrl = URL.createObjectURL(pdfBlob);
-      const a = document.createElement('a');
-      a.href = downloadUrl;
-      a.download = `${(values.name || 'id-card').replace(/\s+/g, '_')}_${id}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(downloadUrl);
+      const baseName = `${(values.name || 'id-card').replace(/\s+/g, '_')}_${id}`;
+      await downloadCardImages(images, baseName);
 
-      setStatus('Updated and PDF downloaded.');
+      setStatus('Updated and PNGs downloaded.');
     } catch (err) {
       console.error(err);
       setStatus(err.message || 'Something went wrong.');
@@ -159,7 +154,7 @@ export default function EditCardPage() {
           onSignatureChange={setSignatureFile}
           onSubmit={handleSubmit}
           saving={saving}
-          submitLabel="Update & Download PDF"
+          submitLabel="Update & Download PNGs"
           cardNo={id}
         />
         {status && <p className="status-msg">{status}</p>}
@@ -175,6 +170,7 @@ export default function EditCardPage() {
                 ref={frontRef}
                 idNo={id}
                 name={values.name}
+                role={values.role}
                 designation={values.designation}
                 officeDept={values.officeDept}
                 photoUrl={photoUrl}
@@ -187,6 +183,7 @@ export default function EditCardPage() {
             <CardScaler>
               <CardBack
                 ref={backRef}
+                role={values.role}
                 homeAddress={values.homeAddress}
                 dob={values.dob}
                 bloodGroup={values.bloodGroup}

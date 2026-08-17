@@ -6,7 +6,7 @@ import CardFront from '@/components/CardFront';
 import CardBack from '@/components/CardBack';
 import CardScaler from '@/components/CardScaler';
 import { IconIdCard } from '@/components/Icons';
-import { generateCardPdf } from '@/lib/pdf';
+import { generateCardImages, downloadCardImages } from '@/lib/cardImages';
 import { DEFAULT_OFFICE_DEPT } from '@/lib/cardConstants';
 import { todayDMY, validUptoFromIssue } from '@/lib/dateHelpers';
 
@@ -14,6 +14,7 @@ function getDefaultValues() {
   const issue = todayDMY();
   return {
     name: '',
+    role: '',
     designation: '',
     officeDept: DEFAULT_OFFICE_DEPT,
     homeAddress: '',
@@ -99,19 +100,13 @@ export default function GeneratePage() {
       const created = await res.json();
       setCreatedId(created.id);
 
-      setStatus('Rendering PDF…');
-      const pdfBlob = await generateCardPdf(frontRef.current, backRef.current);
+      setStatus('Rendering images…');
+      const images = await generateCardImages(frontRef.current, backRef.current);
 
-      const downloadUrl = URL.createObjectURL(pdfBlob);
-      const a = document.createElement('a');
-      a.href = downloadUrl;
-      a.download = `${(values.name || 'id-card').replace(/\s+/g, '_')}_${created.id}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(downloadUrl);
+      const baseName = `${(values.name || 'id-card').replace(/\s+/g, '_')}_${created.id}`;
+      await downloadCardImages(images, baseName);
 
-      setStatus(`Saved as Card #${created.id} and PDF downloaded.`);
+      setStatus(`Saved as Card #${created.id} and PNGs downloaded.`);
     } catch (err) {
       console.error(err);
       setStatus(err.message || 'Something went wrong.');
@@ -135,7 +130,7 @@ export default function GeneratePage() {
           onSubmit={handleSubmit}
           onReset={handleReset}
           saving={saving}
-          submitLabel="Save & Generate PDF"
+          submitLabel="Save & Download PNGs"
           cardNo={createdId}
         />
         {status && <p className="status-msg">{status}</p>}
@@ -151,6 +146,7 @@ export default function GeneratePage() {
                 ref={frontRef}
                 idNo={createdId ?? '—'}
                 name={values.name}
+                role={values.role}
                 designation={values.designation}
                 officeDept={values.officeDept}
                 photoUrl={photoUrl}
@@ -163,6 +159,7 @@ export default function GeneratePage() {
             <CardScaler>
               <CardBack
                 ref={backRef}
+                role={values.role}
                 homeAddress={values.homeAddress}
                 dob={values.dob}
                 bloodGroup={values.bloodGroup}

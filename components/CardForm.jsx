@@ -2,6 +2,7 @@
 
 import styles from './CardForm.module.css';
 import { IconIdCard, IconFlip } from './Icons';
+import { ROLES } from '@/lib/cardConstants';
 
 export default function CardForm({
   values,
@@ -24,6 +25,32 @@ export default function CardForm({
         <IconIdCard size={15} />
         Card No. {cardNo ? `#${cardNo}` : '— assigned automatically on save'}
       </p>
+
+      <label className={styles.roleField}>
+        Role
+        <span className={styles.roleSelectWrap}>
+          <span
+            className={styles.roleSwatch}
+            style={{
+              background: ROLES.find((r) => r.value === values.role)?.borderColor || '#cbd2dc',
+            }}
+          />
+          <select name="role" value={values.role} onChange={handleInput} required>
+            <option value="" disabled>
+              Select role…
+            </option>
+            {ROLES.map((r) => (
+              <option key={r.value} value={r.value}>
+                {r.value}
+              </option>
+            ))}
+          </select>
+        </span>
+        <span className={styles.roleHint}>
+          Sets the card&apos;s border color. Registrar cards are signed by the Vice
+          Chancellor; every other role is signed by the Registrar.
+        </span>
+      </label>
 
       <div className={styles.section}>
         <div className={styles.sectionHeader}>

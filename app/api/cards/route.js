@@ -38,6 +38,7 @@ export async function POST(request) {
     .from('cards')
     .insert({
       name: fields.name,
+      role: fields.role,
       designation: fields.designation,
       office_dept: fields.officeDept,
       photo_path: photoPath,
@@ -67,6 +68,7 @@ function extractFields(form) {
   };
   return {
     name: get('name'),
+    role: get('role'),
     designation: get('designation'),
     officeDept: get('officeDept'),
     homeAddress: get('homeAddress'),

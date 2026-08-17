@@ -347,7 +347,7 @@ body {
 
 .records-table {
   width: 100%;
-  min-width: 620px;
+  min-width: 720px;
   border-collapse: collapse;
   font-size: 14px;
 }
@@ -392,6 +392,23 @@ body {
   color: var(--navy);
   background: var(--navy-soft);
   border-radius: 999px;
+}
+
+.role-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.role-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
 }
 
 .designation-cell {

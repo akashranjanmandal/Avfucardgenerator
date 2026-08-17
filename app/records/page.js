@@ -5,7 +5,8 @@ import Link from 'next/link';
 import CardFront from '@/components/CardFront';
 import CardBack from '@/components/CardBack';
 import { IconList, IconSearch, IconEdit, IconDownload, IconTrash, IconInbox } from '@/components/Icons';
-import { generateCardPdf } from '@/lib/pdf';
+import { generateCardImages, downloadCardImages } from '@/lib/cardImages';
+import { getRoleBorderColor } from '@/lib/cardConstants';
 
 export default function RecordsPage() {
   const [cards, setCards] = useState([]);
@@ -48,20 +49,14 @@ export default function RecordsPage() {
       try {
         // let the hidden card faces paint before capturing them
         await new Promise((resolve) => requestAnimationFrame(resolve));
-        const pdfBlob = await generateCardPdf(frontRef.current, backRef.current);
+        const images = await generateCardImages(frontRef.current, backRef.current);
         if (cancelled) return;
 
-        const url = URL.createObjectURL(pdfBlob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${(downloadCard.name || 'id-card').replace(/\s+/g, '_')}_${downloadCard.id}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
+        const baseName = `${(downloadCard.name || 'id-card').replace(/\s+/g, '_')}_${downloadCard.id}`;
+        await downloadCardImages(images, baseName);
       } catch (err) {
         console.error(err);
-        alert('Failed to generate the PDF for this card.');
+        alert('Failed to generate the images for this card.');
       } finally {
         if (!cancelled) {
           setDownloadCard(null);
@@ -121,6 +116,7 @@ export default function RecordsPage() {
               <tr>
                 <th>Card No.</th>
                 <th>Name</th>
+                <th>Role</th>
                 <th>Designation</th>
                 <th>Updated</th>
                 <th>Actions</th>
@@ -133,6 +129,17 @@ export default function RecordsPage() {
                     <span className="card-no-pill">#{c.id}</span>
                   </td>
                   <td>{c.name}</td>
+                  <td>
+                    {c.role && (
+                      <span className="role-tag">
+                        <span
+                          className="role-dot"
+                          style={{ background: getRoleBorderColor(c.role) }}
+                        />
+                        {c.role}
+                      </span>
+                    )}
+                  </td>
                   <td className="designation-cell">{c.designation}</td>
                   <td className="designation-cell">{new Date(c.updated_at).toLocaleString()}</td>
                   <td className="actions">
@@ -147,7 +154,7 @@ export default function RecordsPage() {
                       disabled={downloadingId === c.id}
                     >
                       <IconDownload size={14} />
-                      {downloadingId === c.id ? 'Preparing…' : 'Download PDF'}
+                      {downloadingId === c.id ? 'Preparing…' : 'Download PNGs'}
                     </button>
                     <button type="button" className="action-btn delete" onClick={() => handleDelete(c.id)}>
                       <IconTrash size={14} />
@@ -167,6 +174,7 @@ export default function RecordsPage() {
             ref={frontRef}
             idNo={downloadCard.id}
             name={downloadCard.name}
+            role={downloadCard.role}
             designation={downloadCard.designation}
             officeDept={downloadCard.office_dept}
             photoUrl={downloadCard.photo_path}
@@ -174,6 +182,7 @@ export default function RecordsPage() {
           />
           <CardBack
             ref={backRef}
+            role={downloadCard.role}
             homeAddress={downloadCard.home_address}
             dob={downloadCard.dob}
             bloodGroup={downloadCard.blood_group}

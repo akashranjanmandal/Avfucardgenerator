@@ -3,24 +3,28 @@
 import { forwardRef } from 'react';
 import styles from './CardFront.module.css';
 import Watermark from './Watermark';
-import { VC_SIGNATURE_LINE_1, VC_SIGNATURE_LINE_2 } from '@/lib/cardConstants';
+import { SIGNATORY_LINE_2, getSignatoryLine1, getRoleBorderColor } from '@/lib/cardConstants';
 
 const CardFront = forwardRef(function CardFront(
-  { idNo, name, designation, officeDept, photoUrl, signatureUrl },
+  { idNo, name, designation, officeDept, role, photoUrl, signatureUrl },
   ref
 ) {
+  const borderColor = getRoleBorderColor(role);
+
   return (
-    <div className={styles.card} ref={ref}>
+    <div className={styles.card} ref={ref} style={{ '--card-border': borderColor }}>
       <Watermark />
 
-      <div className={styles.idNo}>ID No. : {idNo}</div>
-
-      <div className={styles.header}>
-        <div className={styles.uniName}>ASSAM VETERINARY AND FISHERY UNIVERSITY</div>
-        <div className={styles.uniAddr}>KHANAPARA, GUWAHATI, ASSAM, INDIA</div>
+      <div className={styles.topBar}>
+        <div className={styles.idNo}>ID No. : {idNo}</div>
+        <div className={styles.header}>
+          <div className={styles.uniName}>ASSAM VETERINARY AND FISHERY UNIVERSITY</div>
+          <div className={styles.uniAddr}>KHANAPARA, GUWAHATI, ASSAM, INDIA</div>
+        </div>
       </div>
 
       <div className={styles.title}>IDENTITY CARD</div>
+      <div className={styles.titleRule} />
 
       <div className={styles.photoBox}>
         {photoUrl ? (
@@ -57,8 +61,8 @@ const CardFront = forwardRef(function CardFront(
 
         <div className={styles.vcBlock}>
           <div className={styles.vcBlank} />
-          <div className={styles.vcLine1}>{VC_SIGNATURE_LINE_1}</div>
-          <div className={styles.vcLine2}>{VC_SIGNATURE_LINE_2}</div>
+          <div className={styles.vcLine1}>{getSignatoryLine1(role)}</div>
+          <div className={styles.vcLine2}>{SIGNATORY_LINE_2}</div>
         </div>
       </div>
     </div>

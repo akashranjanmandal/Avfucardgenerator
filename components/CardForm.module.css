@@ -11,6 +11,59 @@
   padding: 10px 12px;
 }
 
+.roleField {
+  display: block;
+  margin: 0 0 18px;
+}
+
+.roleSelectWrap {
+  position: relative;
+  display: block;
+  margin-top: 5px;
+}
+
+.roleSwatch {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.roleSelectWrap select {
+  display: block;
+  width: 100%;
+  padding: 9px 11px 9px 30px;
+  font-size: 14px;
+  font-family: inherit;
+  font-weight: 700;
+  color: #171b2e;
+  border: 1px solid #d7dbe6;
+  border-radius: 8px;
+  background: #ffffff;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  appearance: auto;
+}
+
+.roleSelectWrap select:focus {
+  outline: none;
+  border-color: #0d1f6e;
+  box-shadow: 0 0 0 3px rgba(13, 31, 110, 0.12);
+}
+
+.roleHint {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #7a8095;
+  line-height: 1.4;
+}
+
 .section {
   border: 1px solid #e3e7f0;
   border-radius: 12px;

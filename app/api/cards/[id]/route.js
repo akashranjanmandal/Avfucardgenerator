@@ -47,6 +47,7 @@ export async function PUT(request, { params }) {
     .from('cards')
     .update({
       name: get('name'),
+      role: get('role'),
       designation: get('designation'),
       office_dept: get('officeDept'),
       photo_path: photoPath,
