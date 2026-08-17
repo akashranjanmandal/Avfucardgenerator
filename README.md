@@ -15,8 +15,12 @@ The app talks to Supabase over its REST API using the `service_role` key, so it 
 
 1. Open your Supabase project → **SQL Editor** → New query.
 2. Paste the contents of `supabase/migrations/0001_create_cards.sql` and run it.
+3. Paste the contents of `supabase/migrations/0002_id_no_nullable.sql` and run it (needed once the card number switched to the auto-assigned row id — see below).
 
 (Alternatively, if you have the Supabase CLI: `supabase login`, `supabase link --project-ref <your-project-ref>`, `supabase db push`.)
+
+## Card numbers
+Each card's number is its database row id: unique, sequential, starting at 1, assigned automatically when the card is first saved, and never editable. "Date of Issue" defaults to the day the card is first saved, and "Valid Upto" defaults to two years after the Date of Issue — both remain plain editable fields if you need to correct them.
 
 ## Environment variables
 Set these in Netlify's site **Environment variables** (never commit them or paste them into chat/code):

@@ -1,3 +1,13 @@
+.cardNo {
+  margin: 0 0 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0d1f6e;
+  background: #eef1f8;
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+
 .form fieldset {
   border: 1px solid #d8dce3;
   border-radius: 8px;

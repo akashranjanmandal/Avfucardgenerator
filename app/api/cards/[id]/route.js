@@ -46,7 +46,6 @@ export async function PUT(request, { params }) {
   const { error: updateError } = await supabase
     .from('cards')
     .update({
-      id_no: get('idNo'),
       name: get('name'),
       designation: get('designation'),
       office_dept: get('officeDept'),

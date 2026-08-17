@@ -6,30 +6,35 @@ import CardFront from '@/components/CardFront';
 import CardBack from '@/components/CardBack';
 import { generateCardPdf } from '@/lib/pdf';
 import { DEFAULT_OFFICE_DEPT } from '@/lib/cardConstants';
+import { todayDMY, validUptoFromIssue } from '@/lib/dateHelpers';
 
-const emptyValues = {
-  idNo: '',
-  name: '',
-  designation: '',
-  officeDept: DEFAULT_OFFICE_DEPT,
-  homeAddress: '',
-  dob: '',
-  bloodGroup: '',
-  mobile: '',
-  email: '',
-  identificationMark: '',
-  dateOfIssue: '',
-  validUpto: '',
-};
+function getDefaultValues() {
+  const issue = todayDMY();
+  return {
+    name: '',
+    designation: '',
+    officeDept: DEFAULT_OFFICE_DEPT,
+    homeAddress: '',
+    dob: '',
+    bloodGroup: '',
+    mobile: '',
+    email: '',
+    identificationMark: '',
+    dateOfIssue: issue,
+    validUpto: validUptoFromIssue(issue),
+  };
+}
 
 export default function GeneratePage() {
-  const [values, setValues] = useState(emptyValues);
+  const [values, setValues] = useState(getDefaultValues);
+  const [validUptoTouched, setValidUptoTouched] = useState(false);
   const [photoFile, setPhotoFile] = useState(null);
   const [signatureFile, setSignatureFile] = useState(null);
   const [photoUrl, setPhotoUrl] = useState(null);
   const [signatureUrl, setSignatureUrl] = useState(null);
   const [status, setStatus] = useState('');
   const [saving, setSaving] = useState(false);
+  const [createdId, setCreatedId] = useState(null);
 
   const frontRef = useRef(null);
   const backRef = useRef(null);
@@ -55,14 +60,26 @@ export default function GeneratePage() {
   }, [signatureFile]);
 
   function handleChange(field, value) {
-    setValues((v) => ({ ...v, [field]: value }));
+    setCreatedId(null);
+    if (field === 'validUpto') {
+      setValidUptoTouched(true);
+    }
+    setValues((v) => {
+      const next = { ...v, [field]: value };
+      if (field === 'dateOfIssue' && !validUptoTouched) {
+        next.validUpto = validUptoFromIssue(value);
+      }
+      return next;
+    });
   }
 
   function handleReset() {
-    setValues(emptyValues);
+    setValues(getDefaultValues());
+    setValidUptoTouched(false);
     setPhotoFile(null);
     setSignatureFile(null);
     setStatus('');
+    setCreatedId(null);
   }
 
   async function handleSubmit(e) {
@@ -78,6 +95,7 @@ export default function GeneratePage() {
       const res = await fetch('/api/cards', { method: 'POST', body: fd });
       if (!res.ok) throw new Error('Failed to save card record.');
       const created = await res.json();
+      setCreatedId(created.id);
 
       setStatus('Rendering PDF…');
       const pdfBlob = await generateCardPdf(frontRef.current, backRef.current);
@@ -85,13 +103,13 @@ export default function GeneratePage() {
       const downloadUrl = URL.createObjectURL(pdfBlob);
       const a = document.createElement('a');
       a.href = downloadUrl;
-      a.download = `${(values.name || 'id-card').replace(/\s+/g, '_')}_${values.idNo || created.id}.pdf`;
+      a.download = `${(values.name || 'id-card').replace(/\s+/g, '_')}_${created.id}.pdf`;
       document.body.appendChild(a);
       a.click();
       a.remove();
       URL.revokeObjectURL(downloadUrl);
 
-      setStatus('Saved to records and PDF downloaded.');
+      setStatus(`Saved as Card #${created.id} and PDF downloaded.`);
     } catch (err) {
       console.error(err);
       setStatus(err.message || 'Something went wrong.');
@@ -113,6 +131,7 @@ export default function GeneratePage() {
           onReset={handleReset}
           saving={saving}
           submitLabel="Save & Generate PDF"
+          cardNo={createdId}
         />
         {status && <p className="status-msg">{status}</p>}
       </section>
@@ -124,7 +143,7 @@ export default function GeneratePage() {
             <div className="preview-label">Front</div>
             <CardFront
               ref={frontRef}
-              idNo={values.idNo}
+              idNo={createdId ?? '—'}
               name={values.name}
               designation={values.designation}
               officeDept={values.officeDept}

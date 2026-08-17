@@ -9,9 +9,11 @@ export async function GET(request) {
 
   let query = supabase.from('cards').select('*').order('updated_at', { ascending: false });
   if (q) {
-    const safe = q.replace(/[,()]/g, ' ').trim();
-    if (safe) {
-      query = query.or(`name.ilike.%${safe}%,id_no.ilike.%${safe}%`);
+    if (/^\d+$/.test(q)) {
+      // numeric query: match the card number (the row id) exactly
+      query = query.eq('id', Number(q));
+    } else {
+      query = query.ilike('name', `%${q}%`);
     }
   }
 
@@ -30,10 +32,11 @@ export async function POST(request) {
   const now = new Date().toISOString();
   const supabase = getSupabaseAdmin();
 
+  // The card number is the row's own auto-incrementing id — unique, sequential,
+  // starting at 1, and never supplied by the client.
   const { data, error } = await supabase
     .from('cards')
     .insert({
-      id_no: fields.idNo,
       name: fields.name,
       designation: fields.designation,
       office_dept: fields.officeDept,
@@ -63,7 +66,6 @@ function extractFields(form) {
     return typeof v === 'string' ? v : '';
   };
   return {
-    idNo: get('idNo'),
     name: get('name'),
     designation: get('designation'),
     officeDept: get('officeDept'),

@@ -6,11 +6,13 @@ import CardForm from '@/components/CardForm';
 import CardFront from '@/components/CardFront';
 import CardBack from '@/components/CardBack';
 import { generateCardPdf } from '@/lib/pdf';
+import { validUptoFromIssue } from '@/lib/dateHelpers';
 
 export default function EditCardPage() {
   const { id } = useParams();
 
   const [values, setValues] = useState(null);
+  const [validUptoTouched, setValidUptoTouched] = useState(false);
   const [photoFile, setPhotoFile] = useState(null);
   const [signatureFile, setSignatureFile] = useState(null);
   const [existingPhotoUrl, setExistingPhotoUrl] = useState(null);
@@ -28,7 +30,6 @@ export default function EditCardPage() {
       .then((r) => r.json())
       .then((card) => {
         setValues({
-          idNo: card.id_no || '',
           name: card.name || '',
           designation: card.designation || '',
           officeDept: card.office_dept || '',
@@ -67,7 +68,16 @@ export default function EditCardPage() {
   }, [signatureFile, existingSignatureUrl]);
 
   function handleChange(field, value) {
-    setValues((v) => ({ ...v, [field]: value }));
+    if (field === 'validUpto') {
+      setValidUptoTouched(true);
+    }
+    setValues((v) => {
+      const next = { ...v, [field]: value };
+      if (field === 'dateOfIssue' && !validUptoTouched) {
+        next.validUpto = validUptoFromIssue(value);
+      }
+      return next;
+    });
   }
 
   async function handleSubmit(e) {
@@ -89,7 +99,7 @@ export default function EditCardPage() {
       const downloadUrl = URL.createObjectURL(pdfBlob);
       const a = document.createElement('a');
       a.href = downloadUrl;
-      a.download = `${(values.name || 'id-card').replace(/\s+/g, '_')}_${values.idNo || id}.pdf`;
+      a.download = `${(values.name || 'id-card').replace(/\s+/g, '_')}_${id}.pdf`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -120,6 +130,7 @@ export default function EditCardPage() {
           onSubmit={handleSubmit}
           saving={saving}
           submitLabel="Update & Download PDF"
+          cardNo={id}
         />
         {status && <p className="status-msg">{status}</p>}
       </section>
@@ -131,7 +142,7 @@ export default function EditCardPage() {
             <div className="preview-label">Front</div>
             <CardFront
               ref={frontRef}
-              idNo={values.idNo}
+              idNo={id}
               name={values.name}
               designation={values.designation}
               officeDept={values.officeDept}

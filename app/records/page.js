@@ -53,7 +53,7 @@ export default function RecordsPage() {
         const url = URL.createObjectURL(pdfBlob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `${(downloadCard.name || 'id-card').replace(/\s+/g, '_')}_${downloadCard.id_no || downloadCard.id}.pdf`;
+        a.download = `${(downloadCard.name || 'id-card').replace(/\s+/g, '_')}_${downloadCard.id}.pdf`;
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -86,7 +86,7 @@ export default function RecordsPage() {
         className="search-row"
       >
         <input
-          placeholder="Search by name or ID No."
+          placeholder="Search by name or Card No."
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />
@@ -99,7 +99,7 @@ export default function RecordsPage() {
         <table className="records-table">
           <thead>
             <tr>
-              <th>ID No.</th>
+              <th>Card No.</th>
               <th>Name</th>
               <th>Designation</th>
               <th>Updated</th>
@@ -109,7 +109,7 @@ export default function RecordsPage() {
           <tbody>
             {cards.map((c) => (
               <tr key={c.id}>
-                <td>{c.id_no}</td>
+                <td>{c.id}</td>
                 <td>{c.name}</td>
                 <td>{c.designation}</td>
                 <td>{new Date(c.updated_at).toLocaleString()}</td>
@@ -142,7 +142,7 @@ export default function RecordsPage() {
         <div style={{ position: 'absolute', left: -9999, top: 0 }}>
           <CardFront
             ref={frontRef}
-            idNo={downloadCard.id_no}
+            idNo={downloadCard.id}
             name={downloadCard.name}
             designation={downloadCard.designation}
             officeDept={downloadCard.office_dept}

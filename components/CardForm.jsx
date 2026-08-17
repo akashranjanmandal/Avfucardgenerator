@@ -11,6 +11,7 @@ export default function CardForm({
   onReset,
   saving,
   submitLabel,
+  cardNo,
 }) {
   function handleInput(e) {
     onChange(e.target.name, e.target.value);
@@ -18,13 +19,12 @@ export default function CardForm({
 
   return (
     <form onSubmit={onSubmit} className={styles.form}>
+      <p className={styles.cardNo}>
+        Card No. {cardNo ? `#${cardNo}` : '— assigned automatically on save'}
+      </p>
+
       <fieldset>
         <legend>Front side</legend>
-
-        <label>
-          ID No.
-          <input name="idNo" value={values.idNo} onChange={handleInput} required />
-        </label>
 
         <label>
           Name
