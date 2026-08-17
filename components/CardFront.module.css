@@ -12,6 +12,10 @@
   overflow: hidden;
   color: #111111;
   flex: 0 0 auto;
+  /* html2canvas (on recent Chrome) collapses space characters to zero
+     width in bold text when letter-spacing is the CSS default ("normal") —
+     an explicit near-zero value forces its accurate per-glyph text path. */
+  letter-spacing: 0.01px;
 }
 
 /* ID No. sits on its own full-width line above the header instead of
